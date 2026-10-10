@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kuziini Photos — descărcare</title>
+<meta name="description" content="Pozele de pe calculator după dată, loc și persoane, cu căutare după conținut. Le vezi și de pe telefon. Pentru Windows și Mac.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kuziini Photos">
+<meta property="og:title" content="Kuziini Photos — descarcă pentru Windows și Mac">
+<meta property="og:description" content="Pozele de pe calculator după dată, loc și persoane, cu căutare după conținut. Le vezi și de pe telefon.">
+<meta property="og:url" content="https://kuziini-product.github.io/kuziini-photos/">
+<meta property="og:image" content="https://kuziini-product.github.io/kuziini-photos/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logoul Kuziini Photos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0067c0">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root {
+    --fundal: #eef5fc; --fundal2: #dcebf9; --card: #ffffff; --linie: #c9dbee;
+    --text: #0b1520; --slab: #3d5167; --acc: #0067c0; --acc2: #2b8ad8; --pe-acc: #fff;
+    --cod: #0f1d2c; --pe-cod: #e7f0fa; --umbra: 0 10px 30px rgba(20, 60, 110, .12);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fundal: #0d1620; --fundal2: #112233; --card: #152434; --linie: #23384d;
+      --text: #eaf2fb; --slab: #a9bdd1; --acc: #4ea3f0; --acc2: #2b8ad8; --pe-acc: #04121f;
+      --cod: #08111b; --pe-cod: #dce9f7; --umbra: 0 10px 30px rgba(0, 0, 0, .35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh; color: var(--text); background: linear-gradient(170deg, var(--fundal) 0%, var(--fundal2) 100%);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 920px; margin: 0 auto; padding: 48px 16px 40px; }
+  .cap { text-align: center; margin-bottom: 36px; }
+  .cap img { width: 112px; height: 112px; border-radius: 26px; box-shadow: var(--umbra); display: block; margin: 0 auto 18px; }
+  h1 { font-size: clamp(30px, 6vw, 42px); line-height: 1.1; margin: 0 0 10px; letter-spacing: -.5px; }
+  h1 b { color: var(--acc); }
+  .cap p { margin: 0 auto; max-width: 560px; color: var(--slab); font-size: 18px; }
+  .aviz { display: none; max-width: 640px; margin: 0 auto 24px; padding: 14px 18px; border-radius: 14px;
+          background: var(--card); border: 1px solid var(--linie); text-align: center; color: var(--slab); }
+  .telefon .aviz { display: block; }
+  .telefon .eticheta { display: none; }
+  .variante { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--linie); border-radius: 20px; padding: 26px 24px 22px;
+          box-shadow: var(--umbra); display: flex; flex-direction: column; min-width: 0; }
+  .card.recomandat { border-color: var(--acc); box-shadow: 0 0 0 2px var(--acc), var(--umbra); }
+  .eticheta { align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+              color: var(--pe-acc); background: var(--acc); border-radius: 99px; padding: 3px 10px; margin-bottom: 12px; visibility: hidden; }
+  .card.recomandat .eticheta { visibility: visible; }
+  .titlu { display: flex; align-items: center; gap: 12px; }
+  .titlu svg { width: 34px; height: 34px; flex: none; color: var(--acc); }
+  h2 { margin: 0; font-size: 24px; }
+  .sub { color: var(--slab); font-size: 14px; margin: 4px 0 18px; }
+  .buton { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 18px;
+           border: 0; border-radius: 14px; cursor: pointer; text-decoration: none; font: inherit; font-weight: 650; font-size: 17px;
+           color: #fff; background: linear-gradient(135deg, var(--acc), var(--acc2)); transition: transform .1s, box-shadow .15s; }
+  .buton:hover { box-shadow: 0 6px 18px rgba(0, 103, 192, .35); }
+  .buton:active { transform: scale(.98); }
+  .buton svg { width: 20px; height: 20px; fill: currentColor; }
+  .cod { position: relative; background: var(--cod); color: var(--pe-cod); border-radius: 12px; padding: 12px 14px;
+         font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; margin-bottom: 12px; }
+  ol { margin: 18px 0 0; padding-left: 22px; color: var(--slab); font-size: 15px; }
+  ol li { margin-bottom: 6px; }
+  ol b { color: var(--text); }
+  .copiat { background: linear-gradient(135deg, #1f9d55, #2fbf71); }
+  footer { text-align: center; color: var(--slab); font-size: 14px; margin-top: 34px; }
+  footer a { color: var(--acc); font-weight: 600; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .punct { margin: 0 8px; opacity: .5; }
+</style>
+</head>
+<body>
+<main>
+  <header class="cap">
+    <img src="logo.png" alt="Kuziini Photos" width="112" height="112">
+    <h1>Kuziini <b>Photos</b></h1>
+    <p>Toate pozele și clipurile de pe calculator, după dată, loc și persoane, cu căutare după conținut. Le vezi și de pe telefon.</p>
+  </header>
+
+  <p class="aviz">Instalarea se face pe <b>calculator</b>: deschide linkul acesta pe Windows sau pe Mac. După instalare, aplicația o vezi și pe telefon.</p>
+
+  <section class="variante">
+    <article class="card" id="win">
+      <span class="eticheta">Pentru calculatorul tău</span>
+      <div class="titlu">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-6v2h3v2H7v-2h3v-2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v10h16V6H4z"/></svg>
+        <h2>Windows</h2>
+      </div>
+      <p class="sub">Windows 10 sau 11 · installer de 2,4 MB</p>
+      <a class="buton" href="https://github.com/Kuziini-product/kuziini-photos/releases/latest/download/KuziiniPhotos_Setup.exe">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>Descarcă pentru Windows</a>
+      <ol>
+        <li>Deschide fișierul descărcat. Dacă apare <b>„Windows a protejat computerul”</b>, apasă <b>Mai multe informații → Rulează oricum</b>.</li>
+        <li>Alege <b>folderul cu poze</b> și notează-ți <b>PIN-ul</b> (pentru telefon).</li>
+        <li>Instalarea durează <b>5–15 minute</b>. La întrebarea despre firewall, apasă <b>Da</b>.</li>
+      </ol>
+    </article>
+
+    <article class="card" id="mac">
+      <span class="eticheta">Pentru calculatorul tău</span>
+      <div class="titlu">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 5h14a1 1 0 0 1 1 1v9H4V6a1 1 0 0 1 1-1zm1 2v6h12V7H6zM2 17h20v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1z"/></svg>
+        <h2>Mac</h2>
+      </div>
+      <p class="sub">macOS 11 sau mai nou · procesor Apple sau Intel</p>
+      <div class="cod" id="comanda">curl -fsSL https://github.com/Kuziini-product/kuziini-photos/releases/latest/download/install-mac.sh | bash</div>
+      <button class="buton" id="copiaza" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg><span>Copiază comanda</span></button>
+      <ol>
+        <li>Deschide <b>Terminal</b>: apasă <b>⌘ + Space</b>, scrie „Terminal” și apasă Enter.</li>
+        <li><b>Lipește</b> comanda (⌘ + V) și apasă <b>Enter</b>. Nu îți cere parola.</li>
+        <li>Alege <b>folderul cu poze</b>, notează-ți <b>PIN-ul</b> și așteaptă <b>5–15 minute</b>.</li>
+      </ol>
+    </article>
+  </section>
+
+  <footer>
+    Pozele rămân pe calculatorul tău; nimic nu pleacă pe internet.
+    <span class="punct">·</span><a href="https://github.com/Kuziini-product/kuziini-photos#readme">Instrucțiuni complete și dezinstalare</a>
+  </footer>
+</main>
+<script>
+  // scoate în față varianta pentru sistemul vizitatorului; pe telefon arată că instalarea se face pe calculator
+  const ua = navigator.userAgent, platforma = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+  const telefon = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) && !/Macintosh/.test(platforma);
+  const mac = /Mac/i.test(platforma) && !telefon;
+  if (telefon) document.body.classList.add('telefon');
+  else {
+    const ales = document.getElementById(mac ? 'mac' : 'win');
+    ales.classList.add('recomandat');
+    if (mac) ales.parentNode.prepend(ales);
+  }
+  const btn = document.getElementById('copiaza');
+  btn.addEventListener('click', async () => {
+    const text = document.getElementById('comanda').textContent.trim();
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const r = document.createRange(); r.selectNodeContents(document.getElementById('comanda'));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy');
+    }
+    btn.classList.add('copiat'); btn.querySelector('span').textContent = 'Copiată! Acum lipește-o în Terminal';
+    setTimeout(() => { btn.classList.remove('copiat'); btn.querySelector('span').textContent = 'Copiază comanda'; }, 4000);
+  });
+</script>
+</body>
+</html>
