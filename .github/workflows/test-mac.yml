@@ -1,0 +1,93 @@
+# Test automat al instalării pe Mac: rulează installerul exact ca utilizatorul (curl … | bash),
+# fără ferestre de întrebări, pe un Mac cu procesor Apple și pe unul cu Intel.
+name: Test Mac
+on:
+  workflow_dispatch:
+    inputs:
+      versiune:
+        description: 'Versiunea (tag-ul) de testat'
+        default: 'mac-test'
+jobs:
+  mac:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    env:
+      URL: https://github.com/${{ github.repository }}/releases/download/${{ inputs.versiune }}
+      DIR: /Users/runner/Library/Application Support/Kuziini Photos
+    steps:
+      - name: Poze de test (HEIC, JPG, video)
+        run: |
+          mkdir -p ~/Pictures/Test
+          i=0
+          for f in "/System/Library/Desktop Pictures/"*.heic; do
+            [ -f "$f" ] || continue
+            i=$((i+1)); [ $i -gt 6 ] && break
+            cp "$f" ~/Pictures/Test/
+            sips -s format jpeg "$f" --out ~/Pictures/Test/"$(basename "$f" .heic).jpg" >/dev/null
+          done
+          ls -la ~/Pictures/Test
+          uname -m; sw_vers
+
+      - name: ffmpeg de pe martin-riedl.de (ce descarcă installerul când nu există Homebrew)
+        run: |
+          A=$( [ "$(uname -m)" = arm64 ] && echo arm64 || echo amd64 )
+          mkdir -p /tmp/ff && cd /tmp/ff
+          for p in ffmpeg ffprobe; do
+            curl -fsSL -o $p.zip "https://ffmpeg.martin-riedl.de/redirect/latest/macos/$A/release/$p.zip"
+            unzip -o -q $p.zip && chmod +x $p
+            ./$p -version | head -1
+          done
+          ./ffmpeg -v error -f lavfi -i testsrc=duration=2:size=320x240:rate=25 -pix_fmt yuv420p ~/Pictures/Test/clip_test.mp4
+          ls -la ~/Pictures/Test/clip_test.mp4
+
+      - name: Instalare (curl | bash)
+        run: |
+          export KPV_FARA_INTREBARI=1 KPV_FOLDER="$HOME/Pictures/Test" KPV_PIN=123456 KPV_SURSA="$URL/KuziiniPhotos_mac.tar.gz"
+          curl -fsSL "$URL/install-mac.sh" | bash
+
+      - name: Serverul răspunde și indexează
+        run: |
+          for i in $(seq 1 60); do curl -sf localhost:8765/api/status >/dev/null && break; sleep 2; done
+          curl -sf localhost:8765/api/status || { echo "serverul nu răspunde"; cat "$DIR/data/server.log"; exit 1; }
+          # așteaptă indexarea completă (prima dată descarcă și modelele AI)
+          for i in $(seq 1 240); do
+            S=$(curl -s localhost:8765/api/status)
+            echo "$S" | "$DIR/venv/bin/python" -c 'import json,sys; s=json.load(sys.stdin); ix=s.get("index") or {}; print(ix.get("faza"), ix.get("gata"), ix.get("total"), "ruleaza=", s.get("ruleaza"))'
+            echo "$S" | "$DIR/venv/bin/python" -c 'import json,sys; s=json.load(sys.stdin); sys.exit(0 if (s.get("index") or {}).get("faza")=="gata" and not s.get("ruleaza") else 1)' && break
+            sleep 15
+          done
+
+      - name: Verificări
+        run: |
+          set -x
+          P="$DIR/venv/bin/python"
+          "$P" -c 'import torch; print("torch", torch.__version__, "mps:", torch.backends.mps.is_available())' || echo "fără torch"
+          cat "$DIR/config.json"
+          curl -s localhost:8765/api/months; echo
+          curl -s localhost:8765/api/tipuri; echo
+          curl -s localhost:8765/api/folders; echo
+          N=$(curl -s localhost:8765/api/months | "$P" -c 'import json,sys; print(sum(n for _, n in json.load(sys.stdin)))')
+          echo "fișiere în index: $N"
+          [ "$N" -ge 3 ]
+          find "$DIR/data/thumbs" -name '*.jpg' | wc -l
+          curl -s "localhost:8765/api/search?q=munti" | head -c 400; echo
+          curl -s "localhost:8765/api/status" | head -c 600; echo
+          plutil -lint "$HOME/Applications/Kuziini Photos.app/Contents/Info.plist"
+          ls -la "$HOME/Applications/Kuziini Photos.app/Contents/MacOS" "$HOME/Applications/Kuziini Photos.app/Contents/Resources"
+          launchctl print "gui/$(id -u)/ro.kuziini.photos" | head -20 || true
+          curl -s -o /dev/null -w "pagina: %{http_code}\n" localhost:8765/
+
+      - name: Jurnale
+        if: always()
+        run: |
+          for f in "$DIR/instalare.log" "$DIR/data/server.log" "$DIR/data/indexer.log"; do echo "===== $f"; tail -60 "$f" 2>/dev/null; done
+
+      - name: Dezinstalare
+        run: |
+          KPV_RASPUNS="Șterge tot" bash "$DIR/mac/dezinstaleaza.sh"
+          sleep 2
+          [ ! -d "$DIR" ] && [ ! -d "$HOME/Applications/Kuziini Photos.app" ] && ! curl -sf localhost:8765/api/status && echo "dezinstalare curată"
