@@ -74,7 +74,8 @@ jobs:
           echo "fișiere în index: $N"
           [ "$N" -ge 3 ]
           find "$DIR/data/thumbs" -name '*.jpg' | wc -l
-          curl -s "localhost:8765/api/search?q=munti" | head -c 400; echo
+          "$P" -c "import sqlite3; c = sqlite3.connect('$DIR/data/index.db'); print('poze învățate de AI (clip):', c.execute('select count(*) from clip').fetchone()[0])" || true
+          for q in munti mare cer flori deal abstract culori; do echo "căutare $q: $(curl -s "localhost:8765/api/search?q=$q" | head -c 200)"; done
           curl -s "localhost:8765/api/status" | head -c 600; echo
           plutil -lint "$HOME/Applications/Kuziini Photos.app/Contents/Info.plist"
           ls -la "$HOME/Applications/Kuziini Photos.app/Contents/MacOS" "$HOME/Applications/Kuziini Photos.app/Contents/Resources"
